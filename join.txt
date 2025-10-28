@@ -1,0 +1,171 @@
+Join
+PROBLEM STATEMENT: DESIGN AT LEAST 10 SQL QUERIES FOR SUTABLE DATABASE APPLICATION USING SQL DML STATEMENTS:ALL TYPES OF JOIN,SUB-QUERY AND VIEW.
+
+
+A) Exercise on Joins and Correlations :
+********************************************************************************
+
+1) Find out the products. Which have been sold to 'Ivan Bayross'.
+
+mysql> SELECT
+NAME,
+PRODUCT_MASTER.PRODUCT_NO,
+DESCRIPTION,
+SALES_ORDER.ORDER_NO 
+FROM 
+CLIENT_MASTER,
+PRODUCT_MASTER,
+SALES_ORDER,
+SALES_ORDER_DETAILS 
+WHERE 
+CLIENT_MASTER.NAME = 'Ivan Bayross' 
+AND 
+CLIENT_MASTER.CLIENT_NO = SALES_ORDER.CLIENT_NO 
+AND 
+SALES_ORDER.ORDER_NO = SALES_ORDER_DETAILS.ORDER_NO 
+AND 
+SALES_ORDER_DETAILS.PRODUCT_NO = PRODUCT_MASTER.PRODUCT_NO;
+
++--------------+------------+--------------+----------+ 
+| NAME         | PRODUCT_NO | DESCRIPTION  | ORDER_NO | 
++--------------+------------+--------------+----------+ 
+| IVAN BAYROSS | P0001      | T-SHIRTS     | O19001   | 
+| IVAN BAYROSS | P07965     | DEIM SHIRTS  | O19001   | 
+| IVAN BAYROSS | P07885     | PULL OVERS   | O19001   | 
+| IVAN BAYROSS | P0345      | SHIRTS       | O19003   | 
+| IVAN BAYROSS | P06734     | COTTON JEANS | O19003   | 
++--------------+------------+--------------+----------+ 
+5 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+2) Find out the products and their quantities that will have to be delivered in the current month. (ANS NOT SURE)
+
+mysql> SELECT DELY_DATE, SALES_ORDER_DETAILS.PRODUCT_NO,QTY_ORDERED,DESCRIPTION FROM SALES_ORDER,SALES_ORDER_DETAILS,PRODUCT_MASTER WHERE SALES_ORDER.ORDER_NO = SALES_ORDER_DETAILS.ORDER_NO AND SALES_ORDER_DETAILS.PRODUCT_NO = PRODUCT_MASTER.PRODUCT_NO AND DATE_FORMAT(SALES_ORDER.DELY_DATE,'MM') = DATE_FORMAT(SYSDATE(),'MM'); 
++------------+------------+-------------+--------------+ 
+| DELY_DATE  | PRODUCT_NO | QTY_ORDERED | DESCRIPTION  | 
++------------+------------+-------------+--------------+ 
+| 2002-07-20 | P0001      |           4 | T-SHIRTS     | 
+| 2002-07-20 | P07965     |           2 | DEIM SHIRTS  | 
+| 2002-07-20 | P07885     |           2 | PULL OVERS   | 
+| 2002-06-27 | P0001      |          10 | T-SHIRTS     | 
+| 2002-04-07 | P0345      |           2 | SHIRTS       | 
+| 2002-04-07 | P06734     |           1 | COTTON JEANS | 
+| 2002-07-26 | P0001      |          10 | T-SHIRTS     | 
+| 2002-07-26 | P07975     |           5 | LYCRA TOPS   | 
+| 2002-02-20 | P07868     |           3 | TROUSERS     | 
+| 2002-02-20 | P07885     |           3 | PULL OVERS   | 
+| 2002-02-20 | P0001      |          10 | T-SHIRTS     | 
+| 2002-02-20 | P0345      |           4 | SHIRTS       | 
+| 2002-05-22 | P07965     |           1 | DEIM SHIRTS  | 
+| 2002-05-22 | P07975     |           1 | LYCRA TOPS   | 
++------------+------------+-------------+--------------+ 
+14 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+3) List the ProductNo and description of constantly sold (i.e. rapidly moving) products.
+
+mysql> SELECT PRODUCT_NO FROM SALES_ORDER_DETAILS WHERE PRODUCT_RATE = (SELECT MAX(PRODUCT_RATE) FROM SALES_ORDER_DETAILS ); 
++------------+ 
+| PRODUCT_NO | 
++------------+ 
+| P06734     | 
++------------+ 
+1 row in set (0.00 sec) 
+
+
+___________________________________________________________________________________________
+
+4) Find the names of the clients who have purchased 'Trousers'.
+
+mysql> SELECT DISTINCT SO.CLIENT_NO, CM.NAME FROM SALES_ORDER_DETAILS SOD, SALES_ORDER SO, PRODUCT_MASTER PM, CLIENT_MASTER CM WHERE PM.PRODUCT_NO = SOD.PRODUCT_NO AND SO.ORDER_NO = SOD.ORDER_NO AND CM.CLIENT_NO = SO.CLIENT_NO AND DESCRIPTION = 'TROUSERS'; 
++-----------+---------------+ 
+| CLIENT_NO | NAME          | 
++-----------+---------------+ 
+| C00003    | CHHAYA BANKER | 
++-----------+---------------+ 
+1 row in set (0.00 sec) ________________________________________________________________________________________________
+5) List the products and orders from customers who have orderd less than 5 units of 'Pull Overs'.
+mysql> select PRODUCT_MASTER.PRODUCT_NO,ORDER_NO from PRODUCT_MASTER,SALES_ORDER_DETAILS where DESCRIPTION = 'PULL OVERS' and PRODUCT_MASTER.PRODUCT_NO = SALES_ORDER_DETAILS.PRODUCT_NO and QTY_ORDERED < 5; 
++------------+----------+ 
+| PRODUCT_NO | ORDER_NO | 
++------------+----------+ 
+| P07885     | O19001   | 
+| P07885     | O46865   | 
++------------+----------+ 
+2 rows in set (0.00 sec) 
+________________________________________________________________________________________________
+6) Find the products and their quantities for the orders placed by ‘Ivan Bayross’ and ‘Mamta Muzumdar’.
+
+mysql> SELECT SOD.PRODUCT_NO, PM.DESCRIPTION, SUM(QTY_ORDERED) UNITS_ORDERED FROM SALES_ORDER_DETAILS SOD, SALES_ORDER SO, PRODUCT_MASTER PM, CLIENT_MASTER CM WHERE SO.ORDER_NO = SOD.ORDER_NO AND PM.PRODUCT_NO = SOD.PRODUCT_NO AND CM.CLIENT_NO = SO.CLIENT_NO AND (CM.NAME = 'IVAN BAYROSS' OR CM.NAME = 'MAMTA MUZUMDAR') GROUP BY SOD.PRODUCT_NO, PM.DESCRIPTION; 
++------------+--------------+---------------+ 
+| PRODUCT_NO | DESCRIPTION  | UNITS_ORDERED | 
++------------+--------------+---------------+ 
+| P0001      | T-SHIRTS     |            14 | 
+| P0345      | SHIRTS       |             2 | 
+| P06734     | COTTON JEANS |             1 | 
+| P07885     | PULL OVERS   |             2 | 
+| P07965     | DEIM SHIRTS  |             2 | 
++------------+--------------+---------------+ 
+5 rows in set (0.00 sec) 
+_______________________________________________________________________________
+7) Find the products and their quantities for the orders placed by Client_No ‘C00001’ and ‘C00002’.
+mysql> SELECT SO.CLIENT_NO, SOD.PRODUCT_NO, PM.DESCRIPTION, SUM(QTY_ORDERED) UNITS_ORDERED FROM SALES_ORDER SO, SALES_ORDER_DETAILS SOD, PRODUCT_MASTER PM, CLIENT_MASTER CM WHERE SO.ORDER_NO = SOD.ORDER_NO AND SOD.PRODUCT_NO = PM.PRODUCT_NO AND SO.CLIENT_NO = CM.CLIENT_NO GROUP BY SO.CLIENT_NO, SOD.PRODUCT_NO, PM.DESCRIPTION HAVING SO.CLIENT_NO = 'C00001' OR SO.CLIENT_NO = 'C00002'; 
++-----------+------------+--------------+---------------+ 
+| CLIENT_NO | PRODUCT_NO | DESCRIPTION  | UNITS_ORDERED | 
++-----------+------------+--------------+---------------+ 
+| C00001    | P0001      | T-SHIRTS     |             4 | 
+| C00001    | P0345      | SHIRTS       |             2 | 
+| C00001    | P06734     | COTTON JEANS |             1 | 
+| C00001    | P07885     | PULL OVERS   |             2 | 
+| C00001    | P07965     | DEIM SHIRTS  |             2 | 
+| C00002    | P0001      | T-SHIRTS     |            10 | 
++-----------+------------+--------------+---------------+ 
+6 rows in set (0.01 sec) 
+
+
+
+****************************************************************************
+B) Exercise on subqueries
+****************************************************************************
+1)Find the Product_No and Description of non-moving products i.e. Products not beign sold.
+mysql> SELECT PRODUCT_NO, DESCRIPTION FROM PRODUCT_MASTER WHERE PRODUCT_NO NOT IN(SELECT PRODUCT_NO FROM SALES_ORDER_DETAILS); 
++------------+-------------+ 
+| PRODUCT_NO | DESCRIPTION | 
++------------+-------------+ 
+| P07865     | JEANS       | 
+| P08865     | SKIRTS      | 
++------------+-------------+ 
+2 rows in set (0.00 sec) 
+___________________________________________________________________________________________
+2) List the customer name, address1, address2, city and pincode for the client who has placed Order_No ‘O19001’.
+mysql> SELECT NAME, ADDRESS1,ADDRESS2, CITY, STATE, PINCODE FROM CLIENT_MASTER WHERE CLIENT_NO IN(SELECT CLIENT_NO FROM SALES_ORDER WHERE ORDER_NO = 'O19001'); 
++--------------+----------+----------+--------+-------------+---------+ 
+| NAME         | ADDRESS1 | ADDRESS2 | CITY   | STATE       | PINCODE | 
++--------------+----------+----------+--------+-------------+---------+ 
+| IVAN BAYROSS | NASHIK   | YEOLA    | MUMBAI | MAHARASHTRA |  400054 | 
++--------------+----------+----------+--------+-------------+---------+ 
+1 row in set (0.00 sec) 
+________________________________________________________________________________________________
+3) List the client names that have placed orders before the month of May’02.
+mysql> SELECT CLIENT_NO, NAME FROM CLIENT_MASTER WHERE CLIENT_NO IN(SELECT CLIENT_NO FROM SALES_ORDER WHERE DATE_FORMAT(ORDER_DATE, 'MON,YY') < 'MAY,02'); 
+Empty set (0.00 sec) 
+________________________________________________________________________________________________
+4) List if the product ‘LYCRA TOP’ has been ordered by any client and print the Client_No, name to whom it was sold.
+mysql> SELECT CLIENT_NO, NAME FROM CLIENT_MASTER WHERE CLIENT_NO IN(SELECT CLIENT_NO FROM SALES_ORDER WHERE ORDER_NO IN(SELECT ORDER_NO FROM SALES_ORDER_DETAILS WHERE PRODUCT_NO IN(SELECT PRODUCT_NO FROM PRODUCT_MASTER WHERE DESCRIPTION = 'LYCRA TOPS'))); 
++-----------+---------------+ 
+| CLIENT_NO | NAME          | 
++-----------+---------------+ 
+| C00004    | ASHWINI JOSHI | 
+| C00005    | HANSEL COLACO | 
++-----------+---------------+ 
+2 rows in set (0.00 sec) 
+___________________________________________________________________________________________
+5)List the names of clients who have placed orders worth Rs. 10000 or more.
+mysql> SELECT NAME FROM CLIENT_MASTER WHERE CLIENT_NO IN(SELECT CLIENT_NO FROM SALES_ORDER WHERE ORDER_NO IN(SELECT ORDER_NO FROM SALES_ORDER_DETAILS WHERE(QTY_ORDERED * PRODUCT_RATE) >= 10000)); 
++---------------+ 
+| NAME          | 
++---------------+ 
+| IVAN BAYROSS  | 
+| CHHAYA BANKER | 
++---------------+ 
+2 rows in set (0.00 sec)

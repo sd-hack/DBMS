@@ -1,0 +1,186 @@
+MongoDB Assig. No 2
+Problem Statement:-Design and Develop MongoDB Queries using CRUD operation. (Use CRUD operations , SAVE methods,logical operators).
+
+1] Create a data base table for student (rollno,sname,sadd,city,phone,birthdate).
+
+>use mydb 
+switched to db mydb 
+
+> db.createCollection("student") 
+{ "ok" : 1 } 
+
+> db.student.insert({rollno:"101",sname:"rahul",sadd:"ram nagar",city:"nashik",phone:"1234567",birthdate:"20-02-2017"})
+WriteResult({ "nInserted" : 1 })
+> db.student.insert({rollno:"102",sname:"radhika",sadd:"sai nagar",city:"pune",phone:"12367867",birthdate:"21-03-2017"})
+WriteResult({ "nInserted" : 1 }) >db.student.insert({rollno:"103",sname:"arnav",sadd:"dadar",city:"mumbai",phone:"123678977",birthdate:"06-06-2017"})
+WriteResult({ "nInserted" : 1 })
+> db.student.insert({rollno:"104",sname:"asta",sadd:"ram nagar",city:"nashik",phone:"1236789",birthdate:"06-07-2017"})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("59dc76fba54b66504786398e"),
+	"rollno" : "101",
+	"sname" : "rahul",
+	"sadd" : "ram nagar",
+	"city" : "nashik",
+	"phone" : "1234567",
+	"birthdate" : "20-02-2017"
+}
+{
+	"_id" : ObjectId("59dc772ea54b66504786398f"),
+	"rollno" : "102",
+	"sname" : "radhika",
+	"sadd" : "sai nagar",
+	"city" : "pune",
+	"phone" : "12367867",
+	"birthdate" : "21-03-2017"
+}
+{
+	"_id" : ObjectId("59dc7768a54b665047863990"),
+	"rollno" : "103",
+	"sname" : "arnav",
+	"sadd" : "dadar",
+	"city" : "mumbai",
+	"phone" : "123678977",
+	"birthdate" : "06-06-2017"
+}
+{
+	"_id" : ObjectId("59dc77c6a54b665047863991"),
+	"rollno" : "104",
+	"sname" : "asta",
+	"sadd" : "ram nagar",
+	"city" : "nashik",
+	"phone" : "1236789",
+	"birthdate" : "06-07-2017"
+}
+
+2] Change the city of the student having rollno ‘103’ to ‘pune’.
+
+> db.student.update({'rollno':'103'},{$set:{'city':'pune'}})  
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("59dc76fba54b66504786398e"),
+	"rollno" : "101",
+	"sname" : "rahul",
+	"sadd" : "ram nagar",
+	"city" : "nashik",
+	"phone" : "1234567",
+	"birthdate" : "20-02-2017"
+}
+{
+	"_id" : ObjectId("59dc772ea54b66504786398f"),
+	"rollno" : "102",
+	"sname" : "radhika",
+	"sadd" : "sai nagar",
+	"city" : "pune",
+	"phone" : "12367867",
+	"birthdate" : "21-03-2017"
+}
+{
+	"_id" : ObjectId("59dc7768a54b665047863990"),
+	"rollno" : "103",
+	"sname" : "arnav",
+	"sadd" : "dadar",
+	"city" : "pune",
+	"phone" : "123678977",
+	"birthdate" : "06-06-2017"
+}
+{
+	"_id" : ObjectId("59dc77c6a54b665047863991"),
+	"rollno" : "104",
+	"sname" : "asta",
+	"sadd" : "ram nagar",
+	"city" : "nashik",
+	"phone" : "1236789",
+	"birthdate" : "06-07-2017"
+}
+
+
+3] Display all the records of student.
+
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("59dc76fba54b66504786398e"),
+	"rollno" : "101",
+	"sname" : "rahul",
+	"sadd" : "ram nagar",
+	"city" : "nashik",
+	"phone" : "1234567",
+	"birthdate" : "20-02-2017"
+}
+{
+	"_id" : ObjectId("59dc772ea54b66504786398f"),
+	"rollno" : "102",
+	"sname" : "radhika",
+	"sadd" : "sai nagar",
+	"city" : "pune",
+	"phone" : "12367867",
+	"birthdate" : "21-03-2017"
+}
+{
+	"_id" : ObjectId("59dc7768a54b665047863990"),
+	"rollno" : "103",
+	"sname" : "arnav",
+	"sadd" : "dadar",
+	"city" : "mumbai",
+	"phone" : "123678977",
+	"birthdate" : "06-06-2017"
+}
+{
+	"_id" : ObjectId("59dc77c6a54b665047863991"),
+	"rollno" : "104",
+	"sname" : "asta",
+	"sadd" : "ram nagar",
+	"city" : "nashik",
+	"phone" : "1236789",
+	"birthdate" : "06-07-2017"
+}
+
+4] Remove student having ‘rollno’ = ‘101’.
+
+> db.student.remove({'rollno':'101'})
+WriteResult({ "nRemoved" : 1 })
+
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("59dc772ea54b66504786398f"),
+	"rollno" : "102",
+	"sname" : "radhika",
+	"sadd" : "sai nagar",
+	"city" : "pune",
+	"phone" : "12367867",
+	"birthdate" : "21-03-2017"
+}
+{
+	"_id" : ObjectId("59dc7768a54b665047863990"),
+	"rollno" : "103",
+	"sname" : "arnav",
+	"sadd" : "dadar",
+	"city" : "pune",
+	"phone" : "123678977",
+	"birthdate" : "06-06-2017"
+}
+{
+	"_id" : ObjectId("59dc77c6a54b665047863991"),
+	"rollno" : "104",
+	"sname" : "asta",
+	"sadd" : "ram nagar",
+	"city" : "nashik",
+	"phone" : "1236789",
+	"birthdate" : "06-07-2017"
+}
+
+5] Drop collection.
+
+> db.student.drop()
+true
+
+> db.student.find()
+
+6] Drop database.
+
+> db.dropDatabase()
+{ "dropped" : "crud", "ok" : 1 }

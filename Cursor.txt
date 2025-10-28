@@ -1,0 +1,77 @@
+Cursor
+Problem Statement:-Cursor:-(all types:Implicit,Explicit,Cursor FOR Loop Parameterized Cursor) Write a PL/SQL block of code using parameterized cursor that will merge the data available in the newly created table N rollcall with the data available in the table O_rollcall.If the data in the first table already exits in the second table then that data should be skipped .
+
+********************************************************************************
+
+mysql> CREATE DATABASE ASSGN6; 
+Query OK, 1 row affected (0.00 sec) 
+
+mysql> USE ASSGN6; 
+Database changed 
+
+
+mysql> CREATE TABLE STUD_MARKS(ROLLNO INT(11),NAME VARCHAR(10),TOTAL_MARKS INT(11)); 
+Query OK, 0 rows affected (0.37 sec) 
+
+
+mysql> CREATE TABLE NEW_STUD_MARKS(ROLLNO INT(11),GRADE CHAR(10)); 
+Query OK, 0 rows affected (0.37 sec) 
+
+
+mysql> INSERT INTO STUD_MARKS (ROLLNO,NAME,TOTAL_MARKS) 
+VALUES 
+('1','PUNAM','80'), 
+('2','SHRADDHA','90'), 
+('3','VAIBHAV','70'), 
+('4','RESHMA','60'), 
+('5','PRATIKSHA','50'); 
+Query OK, 5 rows affected (0.33 sec) 
+Records: 5  Duplicates: 0  Warnings: 0 
+
+
+mysql> DELIMITER // 
+mysql> CREATE PROCEDURE SET_CURSOR6() 
+BEGIN 
+DECLARE ROLL_NO INTEGER; 
+DECLARE MARKS INTEGER; 
+DECLARE FLAG INTEGER; 
+DECLARE C1 CURSOR FOR SELECT ROLLNO, TOTAL_MARKS FROM STUD_MARKS; 
+OPEN C1; 
+LL:LOOP 
+FETCH C1 INTO ROLL_NO, MARKS; 
+SET FLAG=0; 
+SELECT ROLLNO INTO FLAG FROM NEW_STUD_MARKS WHERE NEW_STUD_MARKS.ROLLNO = ROLL_NO; 
+IF FLAG=0 THEN 
+IF MARKS <= 100 AND MARKS >= 65 THEN INSERT INTO NEW_STUD_MARKS VALUES (ROLL_NO,'DIST'); 
+END IF; 
+IF MARKS < 65 AND MARKS >= 60 THEN INSERT INTO NEW_STUD_MARKS VALUES (ROLL_NO,'FC'); 
+END IF; 
+IF MARKS < 60 AND MARKS >= 50 THEN INSERT INTO NEW_STUD_MARKS VALUES (ROLL_NO,'SC'); 
+END IF; 
+IF MARKS < 50 AND MARKS >= 40 THEN INSERT INTO NEW_STUD_MARKS VALUES (ROLL_NO,'PC'); 
+END IF; 
+IF MARKS < 40 THEN INSERT INTO NEW_STUD_MARKS VALUES (ROLLNO,'FAIL'); 
+END IF; 
+END IF; 
+END LOOP LL; 
+CLOSE C1; 
+END; 
+// 
+Query OK, 0 rows affected (0.00 sec) 
+
+
+mysql> CALL SET_CURSOR6; // 
+ERROR 1329 (02000): No data - zero rows fetched, selected, or processed 
+
+mysql> SELECT *FROM NEW_STUD_MARKS; // 
++--------+-------+ 
+| ROLLNO | GRADE | 
++--------+-------+ 
+|      1 | DIST  | 
+|      2 | DIST  | 
+|      3 | DIST  | 
+|      4 | FC    | 
+|      5 | SC    | 
++--------+-------+ 
+5 rows in set (0.00 sec) 
+

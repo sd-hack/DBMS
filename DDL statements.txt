@@ -1,0 +1,382 @@
+DDL STATEMENTS
+PROBLEM STATEMENT: DESIGN AND DEVELOP  SQL DDL STATEMENTS WHICH DEMONSTRATE THE USE OF SQL OBJECTS SUCH AS TABLE.
+
+********************************************************************************
+A) CREATE TABLES   
+
+CLIENT_MASTER, 
+PRODUCT_MASTER, 
+SALESMAN_MASTER,
+SALES_ORDER, 
+SALES_ORDER_DETAILS.
+********************************************************************************
+
+mysql> create database ENGG; 
+Query OK, 1 row affected (0.00 sec) 
+
+mysql> use ENGG; 
+Database changed 
+________________________________________________________________________________
+
+>CREATE TABLE CLIENT_MASTER(CLIENT_NO VARCHAR (6), NAME VARCHAR (20), ADDRESS1 VARCHAR (30), ADDRESS2 VARCHAR (30), CITY VARCHAR (15), PINCODE INTEGER (8), STATE VARCHAR (15), BAL_DUE FLOAT (10,2), PRIMARY KEY (CLIENT_NO)); 
+Query OK, 0 rows affected (0.08 sec) 
+
+mysql> DESC CLIENT_MASTER; 
++-----------+-------------+------+-----+---------+-------+ 
+| Field     | Type        | Null | Key | Default | Extra | 
++-----------+-------------+------+-----+---------+-------+ 
+| CLIENT_NO | varchar(6)  | NO   | PRI |         |       | 
+| NAME      | varchar(20) | NO   |     | NULL    |       | 
+| ADDRESS1  | varchar(30) | NO   |     | NULL    |       | 
+| ADDRESS2  | varchar(30) | NO   |     | NULL    |       | 
+| CITY      | varchar(15) | NO   |     | NULL    |       | 
+| PINCODE   | int(8)      | NO   |     | NULL    |       | 
+| STATE     | varchar(15) | NO   |     | NULL    |       | 
+| BAL_DUE   | float(10,2) | NO   |     | NULL    |       | 
++-----------+-------------+------+-----+---------+-------+ 
+8 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+mysql> CREATE TABLE PRODUCT_MASTER (PRODUCT_NO VARCHAR (6), DESCRIPTION VARCHAR (15) NOT NULL, PROFIT_PERSCENT FLOAT (4,2) NOT NULL, UNIT_MEASURE VARCHAR (10) NOT NULL, QTY_ON_HAND INTEGER (8) NOT NULL, REORDER_LVL INTEGER (8) NOT NULL, SELL_PRICE FLOAT (8,2) NOT NULL, COST_PRICE FLOAT (8,2) NOT NULL, PRIMARY KEY (PRODUCT_NO)); 
+Query OK, 0 rows affected (0.08 sec) 
+
+mysql> DESC PRODUCT_MASTER;+-----------------+-------------+------+-----+---------+-------+ 
+| Field           | Type        | Null | Key | Default | Extra | 
++-----------------+-------------+------+-----+---------+-------+ 
+| PRODUCT_NO      | varchar(6)  | NO   | PRI |         |       | 
+| DESCRIPTION     | varchar(15) | NO   |     | NULL    |       | 
+| PROFIT_PERSCENT | float(4,2)  | NO   |     | NULL    |       | 
+| UNIT_MEASURE    | varchar(10) | NO   |     | NULL    |       | 
+| QTY_ON_HAND     | int(8)      | NO   |     | NULL    |       | 
+| REORDER_LVL     | int(8)      | NO   |     | NULL    |       | 
+| SELL_PRICE      | float(8,2)  | NO   |     | NULL    |       | 
+| COST_PRICE      | float(8,2)  | NO   |     | NULL    |       | 
++-----------------+-------------+------+-----+---------+-------+ 
+8 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+mysql> CREATE TABLE SALESMAN_MASTER (SALESMAN_NO VARCHAR (6) PRIMARY KEY, SALESMAN_NAME VARCHAR (20) NOT NULL, ADDRESS1 VARCHAR (30) NOT NULL, ADDRESS2 VARCHAR (30), CITY VARCHAR (20), PINCODE FLOAT (8,2), STATE VARCHAR (20), SAL_AMT FLOAT (8,2) NOT NULL, TGT_TO_GET FLOAT (6,2) NOT NULL, YTD_SALES FLOAT (6,2) NOT NULL, REMARKS VARCHAR (60)); 
+Query OK, 0 rows affected (0.06 sec) 
+
+mysql> DESC SALESMAN_MASTER; 
++---------------+-------------+------+-----+---------+-------+ 
+| Field         | Type        | Null | Key | Default | Extra | 
++---------------+-------------+------+-----+---------+-------+ 
+| SALESMAN_NO   | varchar(6)  | NO   | PRI | NULL    |       | 
+| SALESMAN_NAME | varchar(20) | NO   |     | NULL    |       | 
+| ADDRESS1      | varchar(30) | NO   |     | NULL    |       | 
+| ADDRESS2      | varchar(30) | YES  |     | NULL    |       | 
+| CITY          | varchar(20) | YES  |     | NULL    |       | 
+| PINCODE       | float(8,2)  | YES  |     | NULL    |       | 
+| STATE         | varchar(20) | YES  |     | NULL    |       | 
+| SAL_AMT       | float(8,2)  | NO   |     | NULL    |       | 
+| TGT_TO_GET    | float(6,2)  | NO   |     | NULL    |       | 
+| YTD_SALES     | float(6,2)  | NO   |     | NULL    |       | 
+| REMARKS       | varchar(60) | YES  |     | NULL    |       | 
++---------------+-------------+------+-----+---------+-------+ 
+11 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+mysql> CREATE TABLE SALES_ORDER (ORDER_NO VARCHAR (6) PRIMARY KEY,CLIENT_NO VARCHAR (6), ORDER_DATE DATE NOT NULL, DELY_ADDR VARCHAR (25), SALESMAN_NO VARCHAR (6), DELY_TYPE CHAR (1), BILLYN CHAR (1), DELY_DATE DATE, ORDER_STATUS VARCHAR (10), FOREIGN KEY (CLIENT_NO) REFERENCES CLIENT_MASTER (CLIENT_NO), FOREIGN KEY (SALESMAN_NO) REFERENCES SALESMAN_MASTER (SALESMAN_NO)); 
+Query OK, 0 rows affected (0.14 sec) 
+
+mysql> DESC SALES_ORDER; 
++--------------+-------------+------+-----+---------+-------+ 
+| Field        | Type        | Null | Key | Default | Extra | 
++--------------+-------------+------+-----+---------+-------+ 
+| ORDER_NO     | varchar(6)  | NO   | PRI | NULL    |       | 
+| CLIENT_NO    | varchar(6)  | YES  | MUL | NULL    |       | 
+| ORDER_DATE   | date        | NO   |     | NULL    |       | 
+| DELY_ADDR    | varchar(25) | YES  |     | NULL    |       | 
+| SALESMAN_NO  | varchar(6)  | YES  | MUL | NULL    |       | 
+| DELY_TYPE    | char(1)     | YES  |     | NULL    |       | 
+| BILLYN       | char(1)     | YES  |     | NULL    |       | 
+| DELY_DATE    | date        | YES  |     | NULL    |       | 
+| ORDER_STATUS | varchar(10) | YES  |     | NULL    |       | 
++--------------+-------------+------+-----+---------+-------+ 
+9 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+mysql> CREATE TABLE SALES_ORDER_DETAILS (ORDER_NO VARCHAR (6), PRODUCT_NO VARCHAR (6), QTY_ORDERED INTEGER (8), QTY_DISP INTEGER (8), PRODUCT_RATE FLOAT (10,2), FOREIGN KEY (ORDER_NO) REFERENCES SALES_ORDER (ORDER_NO), FOREIGN KEY (PRODUCT_NO) REFERENCES PRODUCT_MASTER (PRODUCT_NO)); 
+Query OK, 0 rows affected (0.12 sec) 
+
+mysql> DESC SALES_ORDER_DETAILS; 
++--------------+-------------+------+-----+---------+-------+ 
+| Field        | Type        | Null | Key | Default | Extra | 
++--------------+-------------+------+-----+---------+-------+ 
+| ORDER_NO     | varchar(6)  | YES  | MUL | NULL    |       | 
+| PRODUCT_NO   | varchar(6)  | YES  | MUL | NULL    |       | 
+| QTY_ORDERED  | int(8)      | YES  |     | NULL    |       | 
+| QTY_DISP     | int(8)      | YES  |     | NULL    |       | 
+| PRODUCT_RATE | float(10,2) | YES  |     | NULL    |       | 
++--------------+-------------+------+-----+---------+-------+ 
+5 rows in set (0.01 sec) 
+
+********************************************************************************
+B) INSERT THE DATA INTO THEIR RESPECTIVE TABLES.
+********************************************************************************
+
+mysql> 
+INSERT INTO CLIENT_MASTER(CLIENT_NO,NAME,ADDRESS1,ADDRESS2,CITY,PINCODE,STATE,BAL_DUE) 
+    VALUES 
+    ('C00001','IVAN BAYROSS','NASHIK','YEOLA','MUMBAI','400054','MAHARASHTRA','15000'), 
+    ('C00002','MAMTA MUZUMDAR','NIMANI','CBS','MADRAS','780001','TAMIL NADU','0'), 
+     ('C00003','CHHAYA BANKER','DWARKA','ASHOKNAGAR','MUMBAI','400057','MAHARASHTRA','5000'), 
+    ('C00004','ASHWINI JOSHI','RK','SHALIMAR','BANGALORE','560001','KARNATAKA','0'), 
+    ('C00005','HANSEL COLACO','KOPARGAON','LASLGAON','MUMBAI','400060','MAHARASHTRA','2000'), 
+    ('C00006','DIPAK SHARMA','VAIJAPUR','VINCHUR','BANGALORE','560050','KARNATAKA','0'); 
+Query OK, 6 rows affected (0.02 sec) 
+Records: 6  Duplicates: 0  Warnings: 0 
+
+mysql> SELECT *FROM CLIENT_MASTER; 
++-----------+----------------+-----------+------------+-----------+---------+-------------+----------+ 
+| CLIENT_NO | NAME           | ADDRESS1  | ADDRESS2   | CITY      | PINCODE | STATE       | BALDUE   | 
++-----------+----------------+-----------+------------+-----------+---------+-------------+----------+ 
+| C00001    | IVAN BAYROSS   | NASHIK    | YEOLA      | MUMBAI    |  400054 | MAHARASHTRA | 15000.00 | 
+| C00002    | MAMTA MUZUMDAR | NIMANI    | CBS        | MADRAS    |  780001 | TAMIL NADU  |     0.00 | 
+| C00003    | CHHAYA BANKER  | DWARKA    | ASHOKNAGAR | MUMBAI    |  400057 | MAHARASHTRA |  5000.00 | 
+| C00004    | ASHWINI JOSHI  | RK        | SHALIMAR   | BANGALORE |  560001 | KARNATAKA   |     0.00 | 
+| C00005    | HANSEL COLACO  | KOPARGAON | LASLGAON   | MUMBAI    |  400060 | MAHARASHTRA |  2000.00 | 
+| C00006    | DIPAK SHARMA   | VAIJAPUR  | VINCHUR    | BANGALORE |  560050 | KARNATAKA   |     0.00 | 
++-----------+----------------+-----------+------------+-----------+---------+-------------+----------+ 
+6 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+mysql> INSERT INTO PRODUCT_MASTER(PRODUCT_NO,DESCRIPTION,PROFIT_PERSCENT,UNIT_MEASURE,QTY_ON_HAND,REORDER_LVL,SELL_PRICE,COST_PRICE) VALUES ('P0001','T-SHIRTS','5','PIECE','200','50','350','250'), ('P0345','SHIRTS','6','PIECE','150','50','500','350'), ('P06734','COTTON JEANS','5','PIECE','100','20','600','450'), ('P07865','JEANS','5','PIECE','100','20','750','500'), ('P07868','TROUSERS','2','PIECE','150','50','850','550'), ('P07885','PULL OVERS','2.5','PIECE','80','30','700','450'), ('P07965','DEIM SHIRTS','4','PIECE','100','40','350','250'), ('P07975','LYCRA TOPS','5','PIECE','70','30','300','175'), ('P08865','SKIRTS','5','PIECE','75','30','450','300'); 
+Query OK, 9 rows affected (0.02 sec) 
+Records: 9  Duplicates: 0  Warnings: 0 
+
+
+mysql> SELECT *FROM PRODUCT_MASTER; 
++------------+--------------+-----------------+--------------+-------------+-------------+------------+------------+ 
+| PRODUCT_NO | DESCRIPTION  | PROFIT_PERSCENT | UNIT_MEASURE | QTY_ON_HAND | REORDER_LVL | SELL_PRICE | COST_PRICE | 
++------------+--------------+-----------------+--------------+-------------+-------------+------------+------------+ 
+| P0001      | T-SHIRTS     |            5.00 | PIECE        |         200 |          50 |     350.00 |     250.00 | 
+| P0345      | SHIRTS       |            6.00 | PIECE        |         150 |          50 |     500.00 |     350.00 | 
+| P06734     | COTTON JEANS |            5.00 | PIECE        |         100 |          20 |     600.00 |     450.00 | 
+| P07865     | JEANS        |            5.00 | PIECE        |         100 |          20 |     750.00 |     500.00 | 
+| P07868     | TROUSERS     |            2.00 | PIECE        |         150 |          50 |     850.00 |     550.00 | 
+| P07885     | PULL OVERS   |            2.50 | PIECE        |          80 |          30 |     700.00 |     450.00 | 
+| P07965     | DEIM SHIRTS  |            4.00 | PIECE        |         100 |          40 |     350.00 |     250.00 | 
+| P07975     | LYCRA TOPS   |            5.00 | PIECE        |          70 |          30 |     300.00 |     175.00 | 
+| P08865     | SKIRTS       |            5.00 | PIECE        |          75 |          30 |     450.00 |     300.00 | 
++------------+--------------+-----------------+--------------+-------------+-------------+------------+------------+ 
+9 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+mysql> INSERT INTO SALESMAN_MASTER(SALESMAN_NO,SALESMAN_NAME,ADDRESS1,ADDRESS2,CITY,PINCODE,STATE,SAL_AMT,TGT_TO_GET,YTD_SALES,REMARKS) VALUES ('S00001','AMAN','A/14','WORLI','MUMBAI','400002','MAHARSHTRA','3000','100','50','GOOD'), ('S00002','OMKAR','65','NARIMAN','MUMBAI','400001','MAHARSHTRA','3000','200','100','GOOD'), ('S00003','RAJ','P-7','BANDRA','MUMBAI','400032','MAHARSHTRA','3000','200','100','GOOD'), ('S00004','ASHISH','A/5','JUHU','MUMBAI','400044','MAHARSHTRA','3000','200','150','GOOD'); 
+Query OK, 4 rows affected (0.02 sec) 
+Records: 4  Duplicates: 0  Warnings: 0 
+
+mysql> SELECT *FROM SALESMAN_MASTER; 
++-------------+---------------+----------+----------+--------+-----------+------------+---------+------------+-----------+---------+ 
+| SALESMAN_NO | SALESMAN_NAME | ADDRESS1 | ADDRESS2 | CITY   | PINCODE   | STATE      | SAL_AMT | TGT_TO_GET | YTD_SALES | REMARKS | 
++-------------+---------------+----------+----------+--------+-----------+------------+---------+------------+-----------+---------+ 
+| S00001      | AMAN          | A/14     | WORLI    | MUMBAI | 400002.00 | MAHARSHTRA | 3000.00 |     100.00 |     50.00 | GOOD    | 
+| S00002      | OMKAR         | 65       | NARIMAN  | MUMBAI | 400001.00 | MAHARSHTRA | 3000.00 |     200.00 |    100.00 | GOOD    | 
+| S00003      | RAJ           | P-7      | BANDRA   | MUMBAI | 400032.00 | MAHARSHTRA | 3000.00 |     200.00 |    100.00 | GOOD    | 
+| S00004      | ASHISH        | A/5      | JUHU     | MUMBAI | 400044.00 | MAHARSHTRA | 3000.00 |     200.00 |    150.00 | GOOD    | 
++-------------+---------------+----------+----------+--------+-----------+------------+---------+------------+-----------+---------+ 
+4 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+mysql> insert into SALES_ORDER (ORDER_NO,CLIENT_NO,ORDER_DATE,DELY_ADDR,SALESMAN_NO,DELY_TYPE,BILLYN,DELY_DATE,ORDER_STATUS)
+values
+('O19001','C00001','04-06-12','NASHIK','S00001','F','N','02-07-20','In Process'),
+('O19002','C00002','04-06-25','NASHIK','S00002','P','N','02-06-27','Cancelled'),
+('O46865','C00003','04-02-18','NASHIK','S00003','F','Y','02-02-20','Fulfilled'),
+('O19003','C00001','04-04-03','NASHIK','S00001','F','Y','02-04-07','Fulfilled'),
+('O46866','C00004','04-05-20','NASHIK','S00002','P','N','02-05-22','Cancelled'),
+('O19008','C00005','04-05-24','NASHIK','S00004','F','N','02-07-26','In Process');
+
+Query OK, 6 rows affected (0.33 sec) 
+Records: 6  Duplicates: 0  Warnings: 0 
+
+mysql> select * from SALES_ORDER; 
++---------+----------+------------+-----------+------------+----------+--------+------------+-------------+ 
+| ORDERNO | CLIENTNO | ORDER_DATE | DELY_ADDR | SALESMANNO | DELYTYPE | BILLYN | DELYDATE   | ORDERSTATUS | 
++---------+----------+------------+-----------+------------+----------+--------+------------+-------------+ 
+| O19001  | C00001   | 2004-06-12 | NASHIK    | S00001     | F        | N      | 2002-07-20 | In Process  | 
+| O19002  | C00002   | 2004-06-25 | NASHIK    | S00002     | P        | N      | 2002-06-27 | Cancelled   | 
+| O19003  | C00001   | 2004-04-03 | NASHIK    | S00001     | F        | Y      | 2002-04-07 | Fulfilled   | 
+| O19008  | C00005   | 2004-05-24 | NASHIK    | S00004     | F        | N      | 2002-07-26 | In Process  | 
+| O46865  | C00003   | 2004-02-18 | NASHIK    | S00003     | F        | Y      | 2002-02-20 | Fulfilled   | 
+| O46866  | C00004   | 2004-05-20 | NASHIK    | S00002     | P        | N      | 2002-05-22 | Cancelled   | 
++---------+----------+------------+-----------+------------+----------+--------+------------+-------------+ 
+6 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+mysql> insert into SALES_ORDER_DETAILS (ORDER_NO,PRODUCT_NO,QTY_ORDERED,QTY_DISP,PRODUCT_RATE)
+values
+('O19001','P0001','4','4','525'),
+('O19001','P07965','2','1','8400'),
+('O19001','P07885','2','1','5250'), 
+('O19002','P0001','10','0','525'),
+('O46865','P07868','3','3','3150'),
+('O46865','P07885','3','1','5250'),
+('O46865','P0001','10','10','525'),
+('O46865','P0345','4','4','1050'),
+('O19003','P0345','2','2','1050'),
+('O19003','P06734','1','1','12000'),
+('O46866','P07965','1','0','8400'),
+('O46866','P07975','1','0','1050'),
+('O19008','P0001','10','5','525'),
+('O19008','P07975','5','3','1050');
+
+mysql> select * from SALES_ORDER_DETAILS; 
++---------+-----------+------------+---------+-------------+ 
+| ORDERNO | PRODUCTNO | QTYORDERED | QTYDISP | PRODUCTRATE | 
++---------+-----------+------------+---------+-------------+ 
+| O19001  | P0001     |          4 |       4 |      525.00 | 
+| O19001  | P07965    |          2 |       1 |     8400.00 | 
+| O19001  | P07885    |          2 |       1 |     5250.00 | 
+| O19002  | P0001     |         10 |       0 |      525.00 | 
+| O46865  | P07868    |          3 |       3 |     3150.00 | 
+| O46865  | P07885    |          3 |       1 |     5250.00 | 
+| O46865  | P0001     |         10 |      10 |      525.00 | 
+| O46865  | P0345     |          4 |       4 |     1050.00 | 
+| O19003  | P0345     |          2 |       2 |     1050.00 | 
+| O19003  | P06734    |          1 |       1 |    12000.00 | 
+| O46866  | P07965    |          1 |       0 |     8400.00 | 
+| O46866  | P07975    |          1 |       0 |     1050.00 | 
+| O19008  | P0001     |         10 |       5 |      525.00 | 
+| O19008  | P07975    |          5 |       3 |     1050.00 | 
++---------+-----------+------------+---------+-------------+ 
+14 rows in set (0.00 sec) 
+
+********************************************************************************
+C) EXERCISE ON ALTERING THE TABLE STRUCTURE.
+********************************************************************************
+
+1) Add column called 'Telephone' of data type 'number' and size '10' to the 'CLIENT_MASTER' table.
+
+mysql> alter table CLIENT_MASTER add TELEPHONE integer(10); 
+Query OK, 6 rows affected (0.58 sec) 
+Records: 6  Duplicates: 0  Warnings: 0 
+
+mysql> DESC CLIENT_MASTER; 
++-----------+-------------+------+-----+---------+-------+ 
+| Field     | Type        | Null | Key | Default | Extra | 
++-----------+-------------+------+-----+---------+-------+ 
+| CLIENT_NO | varchar(6)  | NO   | PRI |         |       | 
+| NAME      | varchar(20) | YES  |     | NULL    |       | 
+| ADDRESS1  | varchar(30) | YES  |     | NULL    |       | 
+| ADDRESS2  | varchar(30) | YES  |     | NULL    |       | 
+| CITY      | varchar(15) | YES  |     | NULL    |       | 
+| PINCODE   | int(8)      | YES  |     | NULL    |       | 
+| STATE     | varchar(15) | YES  |     | NULL    |       | 
+| BAL_DUE   | float(10,2) | YES  |     | NULL    |       | 
+| TELEPHONE | int(10) | YES  |     | NULL    |       | 
++-----------+-------------+------+-----+---------+-------+ 
+9 rows in set (0.01 sec) 
+
+________________________________________________________________________________
+
+2) Change the size of SellPrice column in PRODUCT_MASTER to 10,2.
+
+mysql> alter table PRODUCT_MASTER modify column SELL_PRICE float (10,2); 
+Query OK, 9 rows affected (0.52 sec) 
+Records: 9  Duplicates: 0  Warnings: 0 
+
+mysql> DESC PRODUCT_MASTER; 
++-----------------+-------------+------+-----+---------+-------+ 
+| Field           | Type        | Null | Key | Default | Extra | 
++-----------------+-------------+------+-----+---------+-------+ 
+| PRODUCT_NO      | varchar(6)  | NO   | PRI |         |       | 
+| DESCRIPTION     | varchar(15) | NO   |     | NULL    |       | 
+| PROFIT_PERSCENT | float(4,2)  | NO   |     | NULL    |       | 
+| UNIT_MEASURE    | varchar(10) | NO   |     | NULL    |       | 
+| QTY_ON_HAND     | int(8)      | NO   |     | NULL    |       | 
+| REORDER_LVL     | int(8)      | NO   |     | NULL    |       | 
+| SELL_PRICE      | float(10,2) | YES  |     | NULL    |       | 
+| COST_PRICE      | float(8,2)  | NO   |     | NULL    |       | 
++-----------------+-------------+------+-----+---------+-------+ 
+8 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+3) Destroy the table CLIENT_MASTER along with its data.
+
+Mysql> DROP TABLE CLIENT_MASTER;
+
+mysql> desc CLIENT_MASTER; 
+ERROR 1146 (42S02): Table 'ASS_1_to_4.CLIENT_MASTER' doesn't exist 
+
+________________________________________________________________________________
+4) Change the name of the SALESMAN_MASTER to SMAN_MAST.
+
+mysql> rename table SALESMAN_MASTER to Sman_mast; 
+Query OK, 0 rows affected (0.04 sec) 
+
+
+mysql> show tables; 
++----------------------+ 
+| Tables_in_ASS_1_to_4 | 
++----------------------+ 
+| CLIENT_MASTER        | 
+| PRODUCT_MASTER       | 
+| SALES_ORDER          | 
+| SALES_ORDER_DETAILS  | 
+| Sman_mast            | 
++----------------------+ 
+5 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+D) Write appropriate SQL statements for the following:
+________________________________________________________________________________
+1) Create a simple index idx_Prod on product cost price from the Product Master Table.
+
+mysql> CREATE INDEX idx_Prod ON PRODUCT_MASTER (COST_PRICE); 
+Query OK, 0 rows affected (0.17 sec) 
+Records: 0  Duplicates: 0  Warnings: 0 
+
+mysql> show index from PRODUCT_MASTER; 
++----------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+ 
+| Table          | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | 
++----------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+ 
+| PRODUCT_MASTER |          0 | PRIMARY  |            1 | PRODUCT_NO  | A         |           9 |     NULL | NULL   |      | BTREE      |         |               | 
+| PRODUCT_MASTER |          1 | idx_Prod |            1 | COST_PRICE  | A         |           9 |     NULL | NULL   |      | BTREE      |         |               | 
++----------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+ 
+2 rows in set (0.00 sec) 
+________________________________________________________________________________
+
+2) Create View on Order_No, Order_Date, Order_Status of the sales_order table and productNo. ProductRate and QTYOrdered of Sales_Order_Details.
+
+mysql> CREATE VIEW vw_Sal_Ord AS 
+    -> SELECT s.ORDER_NO, s.ORDER_DATE, sod.PRODUCT_NO, sod.PRODUCT_RATE, sod.QTY_ORDERED, s.ORDER_STATUS     -> FROM SALES_ORDER s, SALES_ORDER_DETAILS sod WHERE s.ORDER_NO = sod.ORDER_NO; 
+Query OK, 0 rows affected (0.08 sec) 
+
+
+
+mysql> desc vw_Sal_Ord; 
++--------------+-------------+------+-----+---------+-------+ 
+| Field        | Type        | Null | Key | Default | Extra | 
++--------------+-------------+------+-----+---------+-------+ 
+| ORDER_NO     | varchar(6)  | NO   |     | NULL    |       | 
+| ORDER_DATE   | date        | NO   |     | NULL    |       | 
+| PRODUCT_NO   | varchar(6)  | YES  |     | NULL    |       | 
+| PRODUCT_RATE | float(10,2) | YES  |     | NULL    |       | 
+| QTY_ORDERED  | int(8)      | YES  |     | NULL    |       | 
+| ORDER_STATUS | varchar(10) | YES  |     | NULL    |       | 
++--------------+-------------+------+-----+---------+-------+ 
+6 rows in set (0.00 sec) 
+
+mysql> select * FROM vw_Sal_Ord; 
++----------+------------+------------+--------------+-------------+--------------+ 
+| ORDER_NO | ORDER_DATE | PRODUCT_NO | PRODUCT_RATE | QTY_ORDERED | ORDER_STATUS | 
++----------+------------+------------+--------------+-------------+--------------+ 
+| O19001   | 2004-06-12 | P0001      |       525.00 |           4 | In Process   | 
+| O19001   | 2004-06-12 | P07965     |      8400.00 |           2 | In Process   | 
+| O19001   | 2004-06-12 | P07885     |      5250.00 |           2 | In Process   | 
+| O19002   | 2004-06-25 | P0001      |       525.00 |          10 | Cancelled    | 
+| O19003   | 2004-04-03 | P0345      |      1050.00 |           2 | Fulfilled    | 
+| O19003   | 2004-04-03 | P06734     |     12000.00 |           1 | Fulfilled    | 
+| O19008   | 2004-05-24 | P0001      |       525.00 |          10 | In Process   | 
+| O19008   | 2004-05-24 | P07975     |      1050.00 |           5 | In Process   | 
+| O46865   | 2004-02-18 | P07868     |      3150.00 |           3 | Fulfilled    | 
+| O46865   | 2004-02-18 | P07885     |      5250.00 |           3 | Fulfilled    | 
+| O46865   | 2004-02-18 | P0001      |       525.00 |          10 | Fulfilled    | 
+| O46865   | 2004-02-18 | P0345      |      1050.00 |           4 | Fulfilled    | 
+| O46866   | 2004-05-20 | P07965     |      8400.00 |           1 | Cancelled    | 
+| O46866   | 2004-05-20 | P07975     |      1050.00 |           1 | Cancelled    | 
++----------+------------+------------+--------------+-------------+--------------+ 
+14 rows in set (0.00 sec) 

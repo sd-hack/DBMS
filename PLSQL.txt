@@ -1,0 +1,164 @@
+PL/SQL
+Problem Statement:-Unnamed PL/SQL code block Use of control structure and exception handling in mandatory. Write a PL/SQL block of code for the following requirements schima :
+1.Borrower ( rollno, name,dateofissue,nameofbook,status)
+2.Fine ( rollno,date,amt)
+a].Accept rollno & name of book from user.
+b].Check the number of days (from dateofissue),if days are between 15 to 30       then fine amount will be Rs 5 per day.
+c].If no of days>30 per day fine will be Rs 50 per day & for days less than 30,Rs 5 per day.
+d].After submitting the book status will change from I to R.
+e]. If condition of fine is true ,then details will be stored into fine table.
+
+
+________________________________________________________________________________
+
+mysql> CREATE DATABASE ASS5; 
+Query OK, 1 row affected (0.00 sec) 
+
+mysql> USE ASS5 ;
+Database changed 
+
+
+mysql>  CREATE TABLE BORROWER (ROLLNO INTEGER(10),NAME VARCHAR (30),DATEOFISSUE VARCHAR (15), NAMEOFBOOK VARCHAR (30), STATUS CHAR (5));
+
+Query OK, 0 rows affected (0.36 sec) 
+
+mysql> INSERT INTO BORROWER (ROLLNO,NAME,DATEOFISSUE,NAMEOFBOOK,STATUS) 
+VALUES 
+(101,'RAM','2017-06-17','DBMS','R'), 
+(102,'SHAM','2017-07-20','ISEE','R'), 
+(103,'SITA','2017-07-15','SE','R'), 
+(106,'GITA','2017-08-27','DBMS','I'), 
+(107,'QQQ','2017-08-17','CN','I'), 
+(108,'SSSQQQ','2017-08-1','DBMS','I'); 
+
+mysql> SELECT * FROM BORROWER; 
++--------+--------+-------------+------------+--------+ 
+| ROLLNO | NAME   | DATEOFISSUE | NAMEOFBOOK | STATUS | 
++--------+--------+-------------+------------+--------+ 
+|    101 | RAM    | 2017-06-17  | DBMS       | R      | 
+|    102 | SHAM   | 2017-07-20  | ISEE       | R      | 
+|    103 | SITA   | 2017-07-15  | SE         | R      | 
+|    106 | GITA   | 2017-08-27  | DBMS       | I      | 
+|    107 | QQQ    | 2017-08-17  | CN         | I      | 
+|    108 | SSSQQQ | 2017-08-1   | DBMS       | I      | 
++--------+--------+-------------+------------+--------+ 
+6 rows in set (0.00 sec) 
+
+
+DELIMITER // 
+CREATE PROCEDURE DOISSUEBOOK(p1 int,p2 varchar(30),p3 varchar (15),p4 varchar(30)) 
+X:BEGIN 
+SET @p3val = str_to_date(p3,'%d/%m/%y'); 
+SET @p5val = 'i'; 
+SET @ERRORMSG = ''; 
+IF p1 <= 0 THEN 
+BEGIN 
+SET @ERRORMSG = 'Wrong Roll no Specified'; 
+SELECT @ERRORMSG; 
+LEAVE X; 
+END; 
+END IF; 
+IF LENGTH(p4) <= 0 THEN 
+BEGIN 
+SET @ERRORMSG = 'WRONG BOOK'; 
+SELECT @ERRORMSG; 
+LEAVE X; 
+END; 
+END IF; 
+INSERT INTO BORROWER (NAME,DATEOFISSUE,NAMEOFBOOK,STATUS,ROLLNO) 
+VALUES(p2,@p3val,p4,@p5val,p1); 
+END // 
+Query OK, 0 rows affected (1.80 sec)
+
+
+CREATE PROCEDURE DORETURN(RNO integer(10),BOOKNAME VARCHAR(30)) 
+BEGIN 
+SET @NUMDAYS = 0; 
+SET @FINEAMT = 0.0; 
+SET @NUMREC = 0; 
+SELECT DATEDIFF(CURDATE(),DATEOFISSUE) FROM BORROWER WHERE ROLLNO = RNO AND NAMEOFBOOK = BOOKNAME INTO @NUMDAYS; 
+SELECT COUNT(*) FROM BORROWER WHERE ROLLNO = RNO AND NAMEOFBOOK = BOOKNAME INTO @NUMREC; 
+IF @NUMDAYS >= 15 AND @NUMDAYS <= 30 THEN SET @FINEAMT=(@NUMDAYS-15)*5; 
+ELSEIF @NUMDAYS > 30 THEN SET @FINEAMT = ((15*5)+(@NUMDAYS-30)*50); 
+ELSE SET @FINEAMT = 0; 
+END IF; 
+IF @NUMREC > 0 THEN 
+UPDATE BORROWER SET STATUS = 'R' WHERE ROLLNO = RNO AND NAMEOFBOOK = BOOKNAME; 
+INSERT INTO FINE(ROLLNO,DATE,AMT) VALUES (RNO,CURDATE(),@FINEAMT); 
+END IF; 
+END; 
+//
+
+
+mysql> CREATE TABLE FINE (ROLLNO INTEGER,DATE DATE,AMT DECIMAL (5,2)); // 
+Query OK, 0 rows affected (0.37 sec) 
+
+
+mysql> CALL DOISSUEBOOK(106,'GITA','2017-08-27',''); //
++------------+ 
+| @ERRORMSG  | 
++------------+ 
+| WRONG BOOK | 
++------------+ 
+1 row in set (0.00 sec)
+_______________________________________________________________________________
+
+mysql> CALL DOISSUEBOOK(0,'GITA','2017-08-27','DBMS'); // 
++-------------------------+ 
+| @ERRORMSG               | 
++-------------------------+ 
+| Wrong Roll no Specified | 
++-------------------------+ 
+1 row in set (0.00 sec) 
+
+
+mysql> CALL DORETURN(106,'DBMS'); // 
+Query OK, 1 row affected (0.08 sec) 
+
+mysql> SELECT * FROM FINE; // 
++--------+------------+------+ 
+| ROLLNO | DATE       | AMT  | 
++--------+------------+------+ 
+|    106 | 2017-09-12 | 5.00 | 
++--------+------------+------+ 
+1 row in set (0.00 sec) 
+
+
+mysql> SELECT * FROM BORROWER; // 
++--------+--------+-------------+------------+--------+ 
+| ROLLNO | NAME   | DATEOFISSUE | NAMEOFBOOK | STATUS | 
++--------+--------+-------------+------------+--------+ 
+|    101 | RAM    | 2017-06-17  | DBMS       | R      | 
+|    102 | SHAM   | 2017-07-20  | ISEE       | R      | 
+|    103 | SITA   | 2017-07-15  | SE         | R      | 
+|    106 | GITA   | 2017-08-27  | DBMS       | R      | 
+|    107 | QQQ    | 2017-08-17  | CN         | I      | 
+|    108 | SSSQQQ | 2017-08-1   | DBMS       | I      | 
++--------+--------+-------------+------------+--------+ 
+6 rows in set (0.00 sec) 
+
+
+mysql> CALL DORETURN(107,'CN'); // 
+Query OK, 1 row affected (0.38 sec) 
+
+mysql> SELECT * FROM BORROWER; // 
++--------+--------+-------------+------------+--------+ 
+| ROLLNO | NAME   | DATEOFISSUE | NAMEOFBOOK | STATUS | 
++--------+--------+-------------+------------+--------+ 
+|    101 | RAM    | 2017-06-17  | DBMS       | R      | 
+|    102 | SHAM   | 2017-07-20  | ISEE       | R      | 
+|    103 | SITA   | 2017-07-15  | SE         | R      | 
+|    106 | GITA   | 2017-08-27  | DBMS       | R      | 
+|    107 | QQQ    | 2017-08-17  | CN         | R      | 
+|    108 | SSSQQQ | 2017-08-1   | DBMS       | I      | 
++--------+--------+-------------+------------+--------+ 
+6 rows in set (0.00 sec) 
+
+mysql> SELECT * FROM FINE; // 
++--------+------------+-------+ 
+| ROLLNO | DATE       | AMT   | 
++--------+------------+-------+ 
+|    106 | 2017-09-12 |  5.00 | 
+|    107 | 2017-09-12 | 55.00 | 
++--------+------------+-------+ 
+2 rows in set (0.00 sec) 

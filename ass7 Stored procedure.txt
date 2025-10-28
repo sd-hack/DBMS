@@ -1,0 +1,197 @@
+Assignment No 7
+Problem Statement:-PL/SQL Stored procedure and Stored function . Write a Stored procedure namely proc_grade for the categorization of student . If marks      scored by student in examination is <=1500 and marks>=990 then student will be placed in distinction category if marks scored are between 989 and 900 category is first class , if marks 899 and 825 category is higher second class Write a PL/SQL block for using procedure created with above requirements.
+1.Stud_Marks(name,total_marks) 2.Result(roll,name,class)
+
+********************************************************************************
+
+MariaDB [(none)]> create database ASS7; 
+Query OK, 1 row affected (0.01 sec) 
+
+MariaDB [(none)]> use ASS7; 
+Database changed 
+
+
+MariaDB [ASS7]> CREATE TABLE STUD_MARKS (ROLL_NO INT  PRIMARY KEY, NAME CHAR(10), TOTAL_MARKS INT ); 
+Query OK, 0 rows affected (0.06 sec) 
+
+
+mysql> CREATE TABLE RESULT (ROLL_NO INTEGER(10),NAME VARCHAR (10),CLASS CHAR (10)); 
+Query OK, 0 rows affected (0.37 sec) 
+
+
+MariaDB [ASS7]> INSERT INTO STUD_MARKS (ROLL_NO,NAME,TOTAL_MARKS) VALUES 
+(101,'abc',933), 
+(102,'xyz',356), 
+(103,'mnk',450), 
+(104,'pqr',675), 
+(105,'snk',1300), 
+(106,'jnk',250); 
+Query OK, 6 rows affected (0.01 sec) 
+Records: 6  Duplicates: 0  Warnings: 0 
+
+
+MariaDB [ASS7]> SELECT * FROM STUD_MARKS; 
++---------+------+-------------+ 
+| ROLL_NO | NAME | TOTAL_MARKS | 
++---------+------+-------------+ 
+|     101 | abc  |         933 | 
+|     102 | xyz  |         356 | 
+|     103 | mnk  |         450 | 
+|     104 | pqr  |         675 | 
+|     105 | snk  |        1300 | 
+|     106 | jnk  |         250 | 
++---------+------+-------------+ 
+6 rows in set (0.00 sec) 
+
+
+DELIMITER // 
+CREATE PROCEDURE PROC_GRADE(IN MARKS INT(10),OUT CLASS CHAR(10)) 
+BEGIN 
+IF MARKS<=1500 AND MARKS>=990 THEN SET CLASS='DIST'; 
+END IF; 
+IF MARKS<=989 AND MARKS>=900 THEN SET CLASS='FC'; 
+END IF; 
+IF MARKS<=899 AND MARKS>=825 THEN SET CLASS='HSC'; 
+END IF; 
+IF MARKS<=824 AND MARKS>=750 THEN SET CLASS='SC'; 
+END IF; 
+IF MARKS<=749 AND MARKS>=651 THEN SET CLASS='PC';
+END IF;
+IF MARKS<=650 THEN SET CLASS='FAIL'; 
+END IF; 
+END;
+//
+Query OK, 0 rows affected (0.31 sec)
+
+
+DELIMITER // 
+CREATE FUNCTION FIND_RESULT (ROLL_IN INT(5)) RETURNS INT DETERMINISTIC 
+BEGIN 
+DECLARE FMARKS INT; 
+DECLARE GRADE CHAR(10); 
+DECLARE STUD_NAME CHAR(10); 
+SELECT STUD_MARKS.TOTAL_MARKS,STUD_MARKS.NAME INTO FMARKS,STUD_NAME FROM 
+STUD_MARKS WHERE STUD_MARKS.ROLL_NO=ROLL_IN; 
+CALL PROC_GRADE(FMARKS,@GRADE); 
+INSERT INTO RESULT VALUES (ROLL_IN,STUD_NAME,@GRADE); 
+RETURN ROLL_IN; 
+END; 
+// 
+Query OK, 0 rows affected (0.00 sec) 
+
+
+mysql> SELECT FIND_RESULT (104); // 
++-------------------+ 
+| FIND_RESULT (104) | 
++-------------------+ 
+|               104 | 
++-------------------+ 
+1 row in set (0.33 sec) 
+
+mysql> SELECT * FROM RESULT; // 
++---------+------+-------+ 
+| ROLL_NO | NAME | CLASS | 
++---------+------+-------+ 
+|     104 | pqr  | PC    | 
++---------+------+-------+ 
+1 row in set (0.00 sec) 
+
+
+mysql> SELECT FIND_RESULT (101); // 
++-------------------+ 
+| FIND_RESULT (101) | 
++-------------------+ 
+|               101 | 
++-------------------+ 
+1 row in set (0.33 sec) 
+
+mysql> SELECT * FROM RESULT; // 
++---------+------+-------+ 
+| ROLL_NO | NAME | CLASS | 
++---------+------+-------+ 
+|     104 | pqr  | PC    | 
+|     101 | abc  | FC    | 
++---------+------+-------+ 
+2 rows in set (0.00 sec) 
+
+
+mysql> SELECT FIND_RESULT (106); // 
++-------------------+ 
+| FIND_RESULT (106) | 
++-------------------+ 
+|               106 | 
++-------------------+ 
+1 row in set (0.48 sec) 
+
+mysql> SELECT * FROM RESULT; // 
++---------+------+-------+ 
+| ROLL_NO | NAME | CLASS | 
++---------+------+-------+ 
+|     104 | pqr  | PC    | 
+|     101 | abc  | FC    | 
+|     106 | jnk  | FAIL  | 
++---------+------+-------+ 
+3 rows in set (0.00 sec) 
+
+
+mysql> SELECT FIND_RESULT (102); // 
++-------------------+ 
+| FIND_RESULT (102) | 
++-------------------+ 
+|               102 | 
++-------------------+ 
+1 row in set (0.06 sec) 
+
+mysql> SELECT * FROM RESULT; // 
++---------+------+-------+ 
+| ROLL_NO | NAME | CLASS | 
++---------+------+-------+ 
+|     104 | pqr  | PC    | 
+|     101 | abc  | FC    | 
+|     106 | jnk  | FAIL  | 
+|     102 | xyz  | FAIL  | 
++---------+------+-------+ 
+4 rows in set (0.00 sec) 
+
+
+mysql> SELECT FIND_RESULT (103); // 
++-------------------+ 
+| FIND_RESULT (103) | 
++-------------------+ 
+|               103 | 
++-------------------+ 
+1 row in set (0.34 sec) 
+
+mysql> SELECT * FROM RESULT; // 
++---------+------+-------+ 
+| ROLL_NO | NAME | CLASS | 
++---------+------+-------+ 
+|     104 | pqr  | PC    | 
+|     101 | abc  | FC    | 
+|     106 | jnk  | FAIL  | 
+|     102 | xyz  | FAIL  | 
+|     103 | mnk  | FAIL  | 
++---------+------+-------+ 
+5 rows in set (0.00 sec) 
+
+
+mysql> SELECT FIND_RESULT (105); // 
++-------------------+ 
+| FIND_RESULT (105) | 
++-------------------+ 
+|               105 | 
++-------------------+ 
+1 row in set (0.64 sec) 
+
+mysql> SELECT * FROM RESULT; // 
++---------+------+-------+ 
+| ROLL_NO | NAME | CLASS | 
++---------+------+-------+ 
+|     104 | pqr  | PC    | 
+|     101 | abc  | FC    | 
+|     106 | jnk  | FAIL  | 
+|     102 | xyz  | FAIL  | 
+|     103 | mnk  | FAIL  | 
+|     105 | snk  | DIST  | 
++---------+------+-------+ 
+6 rows in set (0.01 sec) 
